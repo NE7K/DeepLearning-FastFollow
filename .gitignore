@@ -179,3 +179,7 @@ dogs-vs-cats/
 sampleSubmission.csv
 test1.zip
 train.zip
+train/*
+.DS_Store
+dataset/*
+dataset
