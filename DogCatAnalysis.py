@@ -1,4 +1,4 @@
-from numpy import take
+import numpy as np
 from sklearn import metrics
 import tensorflow as tf
 import os
