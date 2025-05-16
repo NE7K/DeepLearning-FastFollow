@@ -172,3 +172,10 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# using file list
+dogs-vs-cats.zip
+dogs-vs-cats/
+sampleSubmission.csv
+test1.zip
+train.zip
