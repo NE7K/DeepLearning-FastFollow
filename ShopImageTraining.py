@@ -45,14 +45,33 @@ model = tf.keras.Sequential([
     tf.keras.layers.Dense(10, activation='softmax')
 ])
 
+# call back function
+SaveModelWeight = tf.keras.callbacks.ModelCheckpoint(
+    # 덮어쓰기가 싫으면 mnist{epoch} 사용
+    filepath='Checkpoint/mnist',
+    # validation 값이 최대치만 저장
+    monitor='val_acc',
+    mode='max',
+    # weight only save
+    save_weights_only=True,
+    # epoch 끝날 때마다 저장
+    save_freq='epoch'
+)
+
 # model 요약본
 model.summary()
 
 # info 원핫인코딩에는 categorical crossentropy loss, tf.keras.utils.to_categroical()사용
 # categorie 예측일 때에는 아래 loss 사용
 model.compile( loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.fit(trainX, trainY, validation_data=(testX, testY), epochs=5)
+model.fit(trainX, trainY, validation_data=(testX, testY), epochs=3, callbacks=[SaveModelWeight])
 
 # model 평가
 # score = model.evaluate( testX , testY)
 # print(score)
+
+# model.save('SaveModel/ShopImageTraining')
+
+# GetModel = tf.keras.models.load_model('SaveModel/ShopImageTraining')
+# GetModel.summary()
+# GetModel.evaluate(testX, testY)
