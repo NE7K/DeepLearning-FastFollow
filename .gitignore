@@ -183,3 +183,5 @@ train/*
 .DS_Store
 dataset/*
 dataset
+SaveModel/*
+Checkpoint/*
