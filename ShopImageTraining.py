@@ -82,7 +82,7 @@ model2.summary()
 model2.compile( loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 # model.fit(trainX, trainY, validation_data=(testX, testY), epochs=3, callbacks=[SaveModelWeight])
 
-# Part 
+# Part model weight 값 저장 및 불러오기
 # model2.load_weights('Checkpoint/mnist')
 
 # model2.evaluate(testX, testY)
