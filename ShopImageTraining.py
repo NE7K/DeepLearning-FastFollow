@@ -61,18 +61,18 @@ model2 = tf.keras.Sequential([
     tf.keras.layers.Dense(10, activation='softmax')
 ])
 
-# # call back function
-# SaveModelWeight = tf.keras.callbacks.ModelCheckpoint(
-#     # info 덮어쓰기가 싫으면 mnist{epoch} 사용, 최근에는 확장자명까지 기입해줌
-#     filepath='Checkpoint/mnist..weights.h5',
-#     # validation 값이 최대치만 저장
-#     monitor='val_acc',
-#     mode='max',
-#     # weight only save, BUG 이거 optimizer은 저장 안되니까 오류날 수 있음
-#     save_weights_only=True,
-#     # epoch 끝날 때마다 저장
-#     save_freq='epoch'
-# )
+# call back function
+SaveModelWeight = tf.keras.callbacks.ModelCheckpoint(
+    # info 덮어쓰기가 싫으면 mnist{epoch} 사용, 최근에는 확장자명까지 기입해줌
+    filepath='Checkpoint/mnist..weights.h5',
+    # validation 값이 최대치만 저장
+    monitor='val_acc',
+    mode='max',
+    # weight only save, BUG 이거 optimizer은 저장 안되니까 오류날 수 있음
+    save_weights_only=True,
+    # epoch 끝날 때마다 저장
+    save_freq='epoch'
+)
 
 # model 요약본
 model2.summary()
@@ -80,7 +80,7 @@ model2.summary()
 # info 원핫인코딩에는 categorical crossentropy loss, tf.keras.utils.to_categroical()사용
 # categorie 예측일 때에는 아래 loss 사용
 model2.compile( loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-# model.fit(trainX, trainY, validation_data=(testX, testY), epochs=3, callbacks=[SaveModelWeight])
+model2.fit(trainX, trainY, validation_data=(testX, testY), epochs=3, callbacks=[SaveModelWeight])
 
 # Part model weight 값 저장 및 불러오기
 # model2.load_weights('Checkpoint/mnist')
