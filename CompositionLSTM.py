@@ -66,6 +66,6 @@ model = tf.keras.models.Sequential([
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 # batch size 64개 데이터를 넣고 w값 업데이트, verbose는 학습중 출력되는거 줄이는거, verbose=2
-model.fit(X, Y, batch_size=64, epochs=30)
+model.fit(X, Y, batch_size=64, epochs=50)
 
 model.save('SaveModel/CompositionLSTM.keras')
