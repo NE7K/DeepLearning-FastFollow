@@ -15,15 +15,22 @@ testX = testX / 255.0
 trainX = trainX.reshape((trainX.shape[0], 28, 28, 1))
 testX = testX.reshape((testX.shape[0], 28, 28, 1))
 
-model = tf.keras.Sequential([
-    # 다른 패널 사용, 32개 복사본, (3,3) kernal 사이즈, 이미지는 음수가 없기 때문에 relu, shape 흑백은 1 color은 3
-    tf.keras.layers.Conv2D( 32, (3, 3), padding='same', activation='relu', input_shape=(28, 28, 1)),
-    # (2,2) = pooling size
-    tf.keras.layers.MaxPooling2D( (2,2) ),
-    tf.keras.layers.Flatten(),
-    tf.keras.layers.Dense(64, activation='relu'),
-    tf.keras.layers.Dense(10, activation='softmax')
-])
+# model = tf.keras.Sequential([
+#     # 다른 패널 사용, 32개 복사본, (3,3) kernal 사이즈, 이미지는 음수가 없기 때문에 relu, shape 흑백은 1 color은 3
+#     tf.keras.layers.Conv2D( 32, (3, 3), padding='same', activation='relu', input_shape=(28, 28, 1)),
+#     # (2,2) = pooling size
+#     tf.keras.layers.MaxPooling2D( (2,2) ),
+#     tf.keras.layers.Flatten(),
+#     tf.keras.layers.Dense(64, activation='relu'),
+#     tf.keras.layers.Dense(10, activation='softmax')
+# ])
+
+# Part FunctionalAPI
+imput1
+
+
+# model 생성
+model = tf.keras.Model()
 
 model.compile( loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
