@@ -5,6 +5,9 @@ import os
 import shutil
 import matplotlib.pyplot as plt
 
+# tensorboard 사용 시 필요한 import
+import time
+
 # print( len ( os.listdir('') ) )
 
 # os.mkdir('dataset')
@@ -90,13 +93,17 @@ model = tf.keras.Sequential([
 model.summary()
 
 model.compile( loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.fit(train_ds, validation_data=val_ds, epochs=15)
+
+# info Create log file
+tensorboard = tf.keras.callbacks.TensorBoard( log_dir='LogFile/Log{}'.format('_Model_' + str(int(time.time()))) )
+
+model.fit(train_ds, validation_data=val_ds, epochs=1, callbacks=[tensorboard])
 
 # save model
-model.save('SaveModel/DogCatAnalysis1.keras')
+# model.save('SaveModel/DogCatAnalysis1.keras')
 
 # get model 
-GetModel = tf.keras.models.load_model('SaveModel/DogCatAnalysis1.keras')
+# GetModel = tf.keras.models.load_model('SaveModel/DogCatAnalysis1.keras')
 
-GetModel.summary()
+# GetModel.summary()
 # GetModel.evaluate()
