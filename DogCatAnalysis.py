@@ -65,7 +65,16 @@ for i, result in train_ds.take(1):
 #     plt.show()
 
 model = tf.keras.Sequential([
-    tf.keras.layers.Conv2D( 32, (3, 3), padding='same', activation='relu', input_shape=(64, 64, 3)),
+    
+    # model에 image 넣기 전에 이미지 증강
+    # 가로로 뒤집기, input shape은 첫 번째 레이어에
+    tf.keras.layers.experimental.preprocessing.RandomFlip('horizontal', input_shape=(64, 64, 3)),
+    # 뒤집기
+    tf.keras.layers.experimental.preprocessing.RandomRotation(0.1),
+    # 줌
+    tf.keras.layers.experimental.preprocessing.RandomZoom(0.1),
+
+    tf.keras.layers.Conv2D( 32, (3, 3), padding='same', activation='relu'),
     tf.keras.layers.MaxPooling2D( (2, 2) ),
     tf.keras.layers.Conv2D( 64, (3, 3), padding='same', activation='relu'),
     tf.keras.layers.MaxPooling2D( (2, 2) ),
@@ -81,13 +90,13 @@ model = tf.keras.Sequential([
 model.summary()
 
 model.compile( loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.fit(train_ds, validation_data=val_ds, epochs=5)
+model.fit(train_ds, validation_data=val_ds, epochs=15)
 
 # save model
-model.save('SaveModel/DogCatAnalysis1')
+model.save('SaveModel/DogCatAnalysis1.keras')
 
 # get model 
-# GetModel = tf.keras.models.load_model('SaveModel/DogCatAnalysis1')
+GetModel = tf.keras.models.load_model('model1.keras')
 
-# GetModel.summary()
+GetModel.summary()
 # GetModel.evaluate()
