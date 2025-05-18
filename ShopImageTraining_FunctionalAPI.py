@@ -26,11 +26,17 @@ testX = testX.reshape((testX.shape[0], 28, 28, 1))
 # ])
 
 # Part FunctionalAPI
-imput1
+input1 = tf.keras.layers.Input(shape=[28,28])
+flatten1 = tf.keras.layers.Flatten()(input1)
+dense1 = tf.keras.layers.Dense(28*28, activation='relu')(flatten1)
+reshape1 = tf.keras.layers.Reshape((28,28))(dense1)
 
+concat1 = tf.keras.layers.Concatenate()([input1, reshape1])
+flatten2 = tf.keras.layers.Flatten()(concat1)
+output1 = tf.keras.layers.Dense(10, activation='softmax')(flatten2)
 
 # model 생성
-model = tf.keras.Model()
+model = tf.keras.Model(input1, output1)
 
 model.compile( loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
@@ -38,4 +44,4 @@ model.compile( loss='sparse_categorical_crossentropy', optimizer='adam', metrics
 tensorboard = tf.keras.callbacks.TensorBoard(log_dir='LogFile/Log{}'.format('_Model_' + str(int(time.time()))) )
 
 # Part
-tf.keras.utils.plot_model(model, to_file='model.png', show_shapes=True, show_layer_names=True) 
+tf.keras.utils.plot_model(model, to_file='ModelImage/Model_FunctionalAPI.png', show_shapes=True, show_layer_names=True) 
