@@ -63,8 +63,8 @@ model2 = tf.keras.Sequential([
 
 # # call back function
 # SaveModelWeight = tf.keras.callbacks.ModelCheckpoint(
-#     # 덮어쓰기가 싫으면 mnist{epoch} 사용
-#     filepath='Checkpoint/mnist',
+#     # info 덮어쓰기가 싫으면 mnist{epoch} 사용, 최근에는 확장자명까지 기입해줌
+#     filepath='Checkpoint/mnist..weights.h5',
 #     # validation 값이 최대치만 저장
 #     monitor='val_acc',
 #     mode='max',

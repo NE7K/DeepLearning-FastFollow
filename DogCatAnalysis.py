@@ -96,7 +96,7 @@ model.fit(train_ds, validation_data=val_ds, epochs=15)
 model.save('SaveModel/DogCatAnalysis1.keras')
 
 # get model 
-GetModel = tf.keras.models.load_model('model1.keras')
+GetModel = tf.keras.models.load_model('SaveModel/DogCatAnalysis1.keras')
 
 GetModel.summary()
 # GetModel.evaluate()
