@@ -182,8 +182,10 @@ train.zip
 train/*
 .DS_Store
 dataset/*
-dataset
 SaveModel/*
 Checkpoint/*
 LogFile/*
 ModelImage/*
+dataset2/*
+
+inception_v3.h5
