@@ -32,3 +32,25 @@ tensorboard = tf.keras.callbacks.TensorBoard(log_dir='LogFile/Log{}'.format('_Mo
 
 model.fit(trainX, trainY, validation_data=(testX, testY), epochs=3, callbacks=[tensorboard])
 
+# Part hidden layers fix
+model = tf.keras.Sequential([
+    tf.keras.layers.Conv2D( 32, (3, 3), padding='same', activation='relu', input_shape=(28, 28, 1)),
+    tf.keras.layers.MaxPooling2D( (2,2) ),
+    tf.keras.layers.Conv2D( 64, (3, 3), padding='same', activation='relu'),
+    tf.keras.layers.MaxPooling2D( (2,2) ),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(64, activation='relu'),
+    tf.keras.layers.Dense(10, activation='softmax')
+])
+
+model.compile( loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+# save log
+tensorboard = tf.keras.callbacks.TensorBoard(log_dir='LogFile/Log{}'.format('_Model_' + str(int(time.time()))) )
+
+# Part callback patience early stop, 3번 loss 감소가 진전이 없으면 실행 accuracy는 mode max
+es = tf.keras.callbacks.EarlyStopping( monitor='val_loss', patience=3, mode='min' )
+
+model.fit(trainX, trainY, validation_data=(testX, testY), epochs=3, callbacks=[tensorboard, es])
+
+# Part tensorboard --logdir LogFile : log board print
