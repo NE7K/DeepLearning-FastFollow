@@ -82,9 +82,10 @@ model2.summary()
 model2.compile( loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 # model.fit(trainX, trainY, validation_data=(testX, testY), epochs=3, callbacks=[SaveModelWeight])
 
-model2.load_weights('Checkpoint/mnist')
+# Part 
+# model2.load_weights('Checkpoint/mnist')
 
-model2.evaluate(testX, testY)
+# model2.evaluate(testX, testY)
 
 # model 평가
 # score = model.evaluate( testX , testY)
