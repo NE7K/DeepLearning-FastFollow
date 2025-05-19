@@ -108,6 +108,6 @@ model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy']
 es = EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True, verbose=1)
 
 # batch_size basic 32
-model.fit(X, Y, batch_size=64, epochs=1, callbacks=[es])
+model.fit(X, Y, batch_size=64, epochs=100, callbacks=[es])
 
 model.save('SaveModel/CommentAi.keras')
