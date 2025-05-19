@@ -7,7 +7,11 @@ import tensorflow as tf
 from keras.preprocessing.text import Tokenizer
 
 # 120자 이내로 데이터 제한할때 나머지 0으로 채울때 사용
-from keras.preprocessing.sequence import pad_sequences
+# from keras.preprocessing.sequence import pad_sequences
+
+# GPU 컴에서 사용할 경우
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+
 
 # validation말고 test data 떼고 섞어
 from sklearn.model_selection import train_test_split
@@ -108,6 +112,6 @@ model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy']
 es = EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True, verbose=1)
 
 # batch_size basic 32
-model.fit(X, Y, batch_size=64, epochs=100, callbacks=[es])
+model.fit(X, Y, validation_data=(valX, valY), batch_size=64, epochs=5, callbacks=[es])
 
 model.save('SaveModel/CommentAi.keras')
