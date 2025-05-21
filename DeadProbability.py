@@ -115,3 +115,5 @@ xdata = {
 }
 
 model.fit(xdata, y, epochs=15, validation_split=0.1)
+
+model.save('SaveModel/DeadProbability.keras')
