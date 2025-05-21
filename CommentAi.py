@@ -99,12 +99,6 @@ trainX, valX, trainY, valY = train_test_split(X, Y, test_size=0.2, random_state=
 # print(len(trainX))
 # print(len(valX))
 
-# save tokenizer
-with open('SaveModel/CommentAi_Tokenizer.pickle', 'wb') as f:
-    pickle.dump(tokenizer, f)
-
-exit()
-
 # Part 모델 생성
 model = tf.keras.models.Sequential([
     # 원핫인코딩 대신 쓰는거 (유니크가 3천개잖아;) 글자를 16개의 글자 벡터로 바꿔줌 행렬로
@@ -120,6 +114,10 @@ model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy']
 es = EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True, verbose=1)
 
 # batch_size basic 32
-model.fit(X, Y, validation_data=(valX, valY), batch_size=64, epochs=20, callbacks=[es])
+model.fit(X, Y, validation_data=(valX, valY), batch_size=64, epochs=1, callbacks=[es])
 
 model.save('SaveModel/CommentAi.keras')
+
+# save tokenizer
+with open('SaveModel/CommentAi_Tokenizer.pickle', 'wb') as f:
+    pickle.dump(tokenizer, f)
