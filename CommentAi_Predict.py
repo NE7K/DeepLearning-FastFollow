@@ -1,174 +1,48 @@
 import tensorflow as tf
 import numpy as np
 import pandas as pd
-
-# tokenizer
-from keras.preprocessing.text import Tokenizer
-
-from keras.preprocessing.sequence import pad_sequences
-
-# load model
-from keras.models import load_model
-
 # token load import
 import pickle
 
-# ----------------------------------------------------------------------------------------
+# tokenizer
+from keras.preprocessing.text import Tokenizer
+from keras.preprocessing.sequence import pad_sequences
+# load model
+from keras.models import load_model
 
+# Part model, tokenizer, pickle 불러오기
 
-# label : rating review
-raw = pd.read_table('Data/naver_shopping.txt', names=['rating', 'review'])
-# print(raw)
-
-# data frame create label, rating이 3보다 크면 1 아니면 0
-raw['label'] = np.where( raw['rating'] > 3, 1, 0)
-
-# print(raw)
-
-# 특수문자, 영어 제거 (오타포함) 영어 포함시키리면 A-Za-z
-# BUG 스페이스바 오른쪽에 입력하면 스페이스바 살려줌
-# BUG regex=True 명시 안해주면 정규식 적용이 안되는거 같음
-raw['review'] = raw['review'].str.replace('[^ㄱ-ㅎㅏ-ㅣ가-힣0-9 ]', '', regex=True)
-
-# null none check
-# print(raw.isnull().sum())
-
-# 중복값 제거
-raw.drop_duplicates(subset=['review'], inplace=True)
-# print(raw)
-
-# bag of words
-Unique_Text = raw['review'].tolist() # [review context] 로 변환
-Unique_Text = ''.join(Unique_Text)
-Unique_Text = list(set(Unique_Text))
-Unique_Text.sort()
-# Note 유니크 문자
-# print(Unique_Text[0:100])
-
-# Part 문자 > 정수 tensorflow
-# char level True = 글자 단위, False = 단어 단위
-# oov_token 나중에 새로운 것이 들어왔을 때 <OOV>로 정의
-tokenizer = Tokenizer(char_level=True, oov_token='<OOV>')
-
-# 문자 리스트
-context_list = raw['review'].tolist()
-tokenizer.fit_on_texts(context_list)
-
-# 유니크 문자 정수 치환되었는지 확인
-# print(tokenizer.word_index)
-# print(context_list[0:10])
-
-# Note 단어단위로 전처리할 때, 전체 데이터 중 1회이하 출현단어는 index에서 삭제
-
-# Part X 데이터 : 문자 리스트를 알맞은 숫자로 변환
-train_seq = tokenizer.texts_to_sequences(context_list)
-# print(train_seq)
-
-# Y 데이터
-Y = np.array(raw['label'].tolist())
-# print(Y[0:10])
-
-# Part X 데이터를 삽입할 때 글자 수를 맞춰주는 것이 중요
-
-# 길이 열 추가
-raw['lenght'] = raw['review'].str.len()
-# print(raw)
-
-# 최대길이
-# print(raw.head())
-# 0.500404로 대충 반반 한쪽으로 치우쳐져 있으면, 선플 혹은 악플 중 하나만 구분 가능할지도
-# print(raw.describe())
-
-# max         5.000000       1.000000     140.000000 최대 140글자
-# 120글자 이내는 몇 개의 데이터가 존재하는지
-count = raw['lenght'][raw['lenght'] < 120].count()
-# print(count)
-
-# 최대글자 120 나머지 0
-X = pad_sequences(train_seq, maxlen=120)
-
-# random_state 42 시드
-trainX, valX, trainY, valY = train_test_split(X, Y, test_size=0.2, random_state=42)
-
-# 데이터 쪼갠거 확인
-# print(len(trainX))
-# print(len(valX))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# --------------------------------------------------------------------------------------------------
-
-# 1. model load
-# BUG cant get optimizer
 model = load_model('SaveModel/CommentAi.keras', compile=False)
-
-# BUG set optimizer
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-# model.summary()
-
-# 2. load tokenizer 
 with open('SaveModel/CommentAi_Tokenizer.pickle', 'rb') as f:
     tokenizer = pickle.load(f)
 
-# 3. predict data load
-data = pd.read_table('Data/test.txt', names=['index', 'example_text'])
-# print(data)
+# df = pd.DataFrame({'review': ['완전 최악이네요 울 엄마도 안살듯 ㅋㅋ', '환불해주세요 개극혐', '헐 여기 개갓성비에요']})
 
-# 3.5 null check
-# print(data.isnull().sum())
-data = data.dropna(subset=['example_text'])
+# CSV 파일로 저장 (인덱스 없이, 헤더 포함)
+# df.to_csv('Data/CommentReview.csv', index=False, encoding='utf-8-sig')
 
-# BUG str 강제변환
-data['example_text'] = data['example_text'].astype(str)
+data = pd.read_csv('Data/CommentReview.csv')
 
-# 4. 정규식 적용, regex=True로 정규식 선언 이거 추가 안하면 띄어쓰기 때문에 오류나는듯
-data['example_text'] = data['example_text'].str.replace('[^ㄱ-ㅎㅏ-ㅣ가-힣0-9 ]', '', regex=True)
+# Part preprocessing
 
-# 5. 중복값 제거, inplace True로 원본 수정
-data.drop_duplicates(subset=['example_text'], inplace=True)
+# 1. data['review'] column 정규식 적용
+data['review'] = data['review'].str.replace('[^ㄱ-ㅎㅏ-ㅣ가-힣0-9 ]', '', regex=True)
 
-# 6. 리스트 변환
-new_text = data['example_text'].tolist()
+# 2. 중복 제거
+data.drop_duplicates(subset=['review'], inplace=True)
 
-# 7. 정수 스퀸스
-seq_text = tokenizer.texts_to_sequences(new_text)
+# 3. 리스트화
+datalist = data['review'].tolist()
 
-# 8. 길이 제한
-len_text = pad_sequences(seq_text, maxlen=120)
+# 4. tokenizer가지고 정수 스퀸스
+seq_text = tokenizer.texts_to_sequences(datalist)
 
-# 데이터 출력해보기
-Dtype()
+# 5. 길이 제한
+pre_text = pad_sequences(seq_text, maxlen=120)
 
-# 9. predict
-result = model.predict(len_text)
+# Part predict
 
+result = model.predict(pre_text)
 print(result)
