@@ -1,4 +1,6 @@
 import pandas as pd
+import tensorflow as tf
+import numpy as np
 
 data = pd.read_csv('Data/train.csv')
 
@@ -19,3 +21,19 @@ data['Embarked'] = data['Embarked'].fillna(value='S')
 print(data.isnull().sum())
 
 y = data.pop('Survived')
+
+# normalization
+Fare_Preprocessing = tf.keras.layers.Normalization(axis=None)
+Fare_Preprocessing.adapt(np.array(data['Fare']))
+
+Sib_Preprocessing = tf.keras.layers.Normalization(axis=None)
+Sib_Preprocessing.adapt(np.array(data['SibSp']))
+
+Parch_Preprocessing = tf.keras.layers.Normalization(axis=None)
+Parch_Preprocessing.adapt(np.array(data['Parch']))
+
+Pclass_Preprocessing = tf.keras.layers.Normalization(axis=None)
+Pclass_Preprocessing.adapt(np.array(data['Pclass']))
+
+# print(Pclass_Preprocessing(np.array(data['Pclass'])))
+
