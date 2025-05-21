@@ -45,4 +45,14 @@ pre_text = pad_sequences(seq_text, maxlen=120)
 # Part predict
 
 result = model.predict(pre_text)
-print(result)
+
+# Part predict print
+
+# <class 'numpy.ndarray'>
+# print(type(result))
+
+print('긍정은 0.5 이상, 부정은 0.5 이하')
+        
+# f'{i:.2f}' : 소숫점 2자리까지만 출력
+for i in result.flatten():
+    print(f'{i:.10f}')
