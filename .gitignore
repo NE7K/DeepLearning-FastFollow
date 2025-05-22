@@ -196,3 +196,5 @@ DeadProbability/Data/*
 DeadProbability/SaveModel/*
 CommentAi/SaveModel/*
 CommentAi/Data/*
+DrawHumanFace/img_align_celeba/*
+DrawHumanFace/img_align_celeba
