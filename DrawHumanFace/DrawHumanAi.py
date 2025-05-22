@@ -30,44 +30,98 @@ images = images.reshape(50000, 64, 64, 1)
 image_np = np.array(images)
 print(image_np.shape)
 
-# Part Discriminator
-
+# Part Discriminator : 이미지 진짜인지 가짜인지 구분 모델
 discriminator = tf.keras.models.Sequential([
-  tf.keras.layers.Conv2D(64, (3,3), strides=(2, 2), padding='same', input_shape=[64,64,1]),
-  tf.keras.layers.LeakyReLU(alpha=0.2),
-  tf.keras.layers.Dropout(0.4),
-  tf.keras.layers.Conv2D(64, (3,3), strides=(2, 2), padding='same'),
-  tf.keras.layers.LeakyReLU(alpha=0.2),
-  tf.keras.layers.Dropout(0.4),
-  tf.keras.layers.Flatten(),
-  tf.keras.layers.Dense(1, activation='sigmoid')
-]) 
+    # 64개의 3x3 필터로 특징 추출, strides로 필터가 2칸씩 이동, padding 출력 크기 유지
+    tf.keras.layers.Conv2D(64, (3,3), strides=(2,2), padding='same', input_shape=[64, 64, 1]),
+    # 음수인 경우 0.2 곱함
+    tf.keras.layers.LeakyReLU(alpha=0.2),
+    tf.keras.layers.Dropout(0.4),
+    tf.keras.layers.Conv2D(64, (3,3), strides=(2,2), padding='same'),
+    tf.keras.layers.LeakyReLU(alpha=0.2),
+    tf.keras.layers.Dropout(0.4),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(1, activation='sigmoid')
+])
 
-# 
+# 랜점숫자 100개를 넣으면 이미지 1개
 noise_shape = 100
 
 generator = tf.keras.models.Sequential([
-  tf.keras.layers.Dense(4 * 4 * 256, input_shape=(100,) ), 
-  tf.keras.layers.Reshape((4, 4, 256)),
-  tf.keras.layers.Conv2DTranspose(256, 3, strides=2, padding='same'),
-  tf.keras.layers.LeakyReLU(alpha=0.2),
-  tf.keras.layers.BatchNormalization(),
-  tf.keras.layers.Conv2DTranspose(128, 3, strides=2, padding='same'),
-  tf.keras.layers.LeakyReLU(alpha=0.2),
-  tf.keras.layers.BatchNormalization(),
-  tf.keras.layers.Conv2DTranspose(64, 3, strides=2, padding='same'),
-  tf.keras.layers.LeakyReLU(alpha=0.2),
-  tf.keras.layers.BatchNormalization(),
-  tf.keras.layers.Conv2DTranspose(1, 3, strides=2, padding='same', activation='sigmoid')
+    tf.keras.layers.Dense(4 * 4 * 256, input_shape=(100,)),
+    tf.keras.layers.Reshape((4,4,256)),
+    # 이미지 그림 2배로 키웠다가 컨볼루션 적용
+    tf.keras.layers.Conv2DTranspose(256, 3, strides=2, padding='same'),
+    tf.keras.layers.LeakyReLU(alpha=0.2),
+    # info Covariate shift 문제를 해결하기 위해서 도입하는 레이어
+    tf.keras.layers.BatchNormalization(),
+    tf.keras.layers.Conv2DTranspose(128, 3, strides=2, padding='same'),
+    tf.keras.layers.LeakyReLU(alpha=0.2),
+    tf.keras.layers.BatchNormalization(),
+    tf.keras.layers.Conv2DTranspose(64, 3, strides=2, padding='same'),
+    tf.keras.layers.LeakyReLU(alpha=0.2),
+    tf.keras.layers.BatchNormalization(),
+    # 64, 64, 1 output 내보내기 reshape만쓰면 연관성이 떨어짐
+    tf.keras.layers.Conv2DTranspose(1, 3, strides=2, padding='same', activation='sigmoid')
 ])
 
-print(generator.summary())
+# print(generator.summary())
 
 GAN = tf.keras.models.Sequential([generator, discriminator])
 
 discriminator.compile(optimizer='adam', loss='binary_crossentropy')
 
+# 학습할 필요가 없음 구분만
 discriminator.trainable = False
 
 GAN.compile(optimizer='adam', loss='binary_crossentropy')
 
+def predict_print():
+    # 랜덤숫자 (-1, 1)까지 균일하게 랜덤으로 100개를 8세트 뽑기
+    random_number = np.random.uniform(-1, 1, size=(10,100))
+
+    predict_data = generator.predict(random_number)
+    # print(predict_data.shape)
+
+    for i in range(10):
+        plt.subplot(2,5, i+1)
+        plt.imshow(predict_data[i].reshape(64, 64), cmap='gray')
+        plt.axis('off')
+    plt.tight_layout()
+    plt.show()
+
+x_data = images
+
+# discriminator training
+# discriminator.train_on_batch(진짜 사진 128장, 1로 마킹한 정답)
+# discriminator.train_on_batch(가짜 사진 128장, 0으로 마킹한 정답)
+
+for j in range(300):
+    
+    # print
+    print(f'현재 epoch : {j}')
+    
+    predict_print()
+    
+    for i in range(50000//128):
+        
+        if i % 100 == 0:
+            print(f'현재 몇 번째 batch : {i}')
+        
+        real_pic = x_data[i * 128 : (i+1)*128]
+        one_data = np.ones(shape=(128, 1))
+
+        loss1 = discriminator.train_on_batch(real_pic, one_data)
+
+        random_number = np.random.uniform(-1, 1, size=(128,100))
+        fake_pic = generator.predict(random_number)
+        zero_data = np.zeros(shape=(128, 1))
+
+        loss2 = discriminator.train_on_batch(fake_pic, zero_data)
+
+        random_number = np.random.uniform(-1, 1, size=(128,100))
+        one_data = np.ones(shape=(128, 1))
+
+        loss3 = GAN.train_on_batch(random_number, one_data)
+        
+    print(f'이번 epochs 최종 loss는 Discriminator : {loss1+loss2}, GAN : {loss3}')
