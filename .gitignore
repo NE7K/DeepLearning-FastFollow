@@ -191,3 +191,8 @@ dataset2/*
 inception_v3.h5
 
 Data/*
+
+DeadProbability/Data/*
+DeadProbability/SaveModel/*
+CommentAi/SaveModel/*
+CommentAi/Data/*
