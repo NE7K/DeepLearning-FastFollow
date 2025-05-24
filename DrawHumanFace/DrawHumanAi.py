@@ -28,7 +28,7 @@ images = images.reshape(50000, 64, 64, 1)
 
 # 이미지 넘파이에 저장해서 쉐입 출력해보기
 image_np = np.array(images)
-print(image_np.shape)
+# print(image_np.shape)
 
 # Part Discriminator : 이미지 진짜인지 가짜인지 구분 모델
 discriminator = tf.keras.models.Sequential([
@@ -84,11 +84,16 @@ def predict_print():
     # print(predict_data.shape)
 
     for i in range(10):
-        plt.subplot(2,5, i+1)
-        plt.imshow(predict_data[i].reshape(64, 64), cmap='gray')
-        plt.axis('off')
-    plt.tight_layout()
-    plt.show()
+        # 이미지 저장으로 딥러닝 종료 방지
+        img = predict_data[i].reshape(64, 64)
+        plt.imsave(f'trainingimg/{i}.jpg', img, cmap='gray')
+        # 2x5 사이즈로 배치
+        # plt.subplot(2,5, i+1)
+        # 이미지 보여주기
+        # plt.imshow(predict_data[i].reshape(64, 64), cmap='gray')
+    #     plt.axis('off')
+    # plt.tight_layout()
+    # plt.show()
 
 x_data = images
 
